@@ -129,29 +129,43 @@ const Index = () => {
 
   if (!started) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-white flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full text-center space-y-8 animate-fade-in">
-          <div className="mb-8">
-            <div className="w-32 h-32 mx-auto mb-6 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center border border-white/20">
-              <Icon name="Radio" size={64} className="text-white" />
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Сигнал под прикрытием
-            </h1>
-            
-            <p className="text-lg md:text-xl text-white/90 max-w-xl mx-auto">
-              Вы попали на шпионскую миссию. Измерьте уровень сигнала и спасите мир от радиошума!
-            </p>
-          </div>
+      <div className="min-h-screen bg-[#fff0e3] text-gray-800 flex items-center justify-center p-4">
+        <div className="max-w-4xl w-full">
+          <div className="grid md:grid-cols-2 gap-8 items-center animate-fade-in">
+            <div className="order-2 md:order-1 space-y-6">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+                Агент 7-В, приём!
+              </h1>
+              
+              <div className="space-y-4 text-base md:text-lg text-gray-700 leading-relaxed">
+                <p>
+                  — Центр сообщает: перехвачен неизвестный радиосигнал с частотой 10 кГц. Его уровень нестабилен, и только ты способен его измерить, чтобы предотвратить сбой в системе связи.
+                </p>
+                <p>
+                  — Используй знания по измерению уровня сигналов.
+                </p>
+                <p className="font-semibold">
+                  — Готов? Вперёд!
+                </p>
+              </div>
 
-          <Button 
-            onClick={handleStart}
-            size="lg"
-            className="bg-white text-purple-600 hover:bg-white/90 text-lg px-16 py-7 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform"
-          >
-            Начать миссию
-          </Button>
+              <Button 
+                onClick={handleStart}
+                size="lg"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg px-12 py-7 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform"
+              >
+                Начать миссию
+              </Button>
+            </div>
+
+            <div className="order-1 md:order-2">
+              <img 
+                src="https://cdn.poehali.dev/files/03757991-5602-447c-8abe-4a869d5db582.PNG" 
+                alt="Агент со шпионской камерой" 
+                className="w-full h-auto rounded-3xl shadow-2xl"
+              />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -159,29 +173,29 @@ const Index = () => {
 
   if (completed) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-white flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#fff0e3] text-gray-800 flex items-center justify-center p-4">
         <div className="max-w-2xl w-full text-center space-y-8 animate-scale-in">
-          <div className="w-32 h-32 mx-auto mb-6 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center border border-white/20">
-            <Icon name="ShieldCheck" size={64} className="text-white" />
+          <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl flex items-center justify-center border border-purple-200">
+            <Icon name="ShieldCheck" size={64} className="text-purple-600" />
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
             Миссия выполнена!
           </h1>
           
-          <p className="text-lg md:text-xl text-white/90 max-w-xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-700 max-w-xl mx-auto">
             Превосходно, агент 7-В! Ты измерил уровень сигнала, стабилизировал усилитель и очистил спектр от помех. Связь спасена, мир снова на частоте!
           </p>
 
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl max-w-md mx-auto">
-            <p className="text-sm text-white/70 mb-2">Статус миссии</p>
-            <p className="text-2xl font-bold">Уровень агента повышен ✓</p>
+          <div className="bg-white border border-purple-200 p-6 rounded-2xl max-w-md mx-auto shadow-lg">
+            <p className="text-sm text-gray-600 mb-2">Статус миссии</p>
+            <p className="text-2xl font-bold text-gray-900">Уровень агента повышен ✓</p>
           </div>
 
           <Button 
             onClick={handleRestart}
             size="lg"
-            className="bg-white text-purple-600 hover:bg-white/90 text-lg px-12 py-7 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg px-12 py-7 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform"
           >
             Пройти снова
           </Button>
@@ -193,16 +207,16 @@ const Index = () => {
   const stage = stages[currentStage];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 p-4 md:p-8">
+    <div className="min-h-screen bg-[#fff0e3] p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4 text-white/80 text-sm">
+          <div className="flex items-center justify-between mb-4 text-gray-600 text-sm">
             <span>Этап {currentStage + 1} из {stages.length}</span>
             <span>{Math.round(progress)}% завершено</span>
           </div>
-          <div className="w-full bg-white/20 rounded-full h-2">
+          <div className="w-full bg-purple-100 rounded-full h-2">
             <div 
-              className="bg-white h-2 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
