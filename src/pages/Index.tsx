@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import Icon from '@/components/ui/icon';
 
 type Stage = {
@@ -87,6 +88,10 @@ const stages: Stage[] = [
 ];
 
 const Index = () => {
+  const [hasCompleted, setHasCompleted] = useState(false);
+  const [showNameForm, setShowNameForm] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [started, setStarted] = useState(false);
   const [currentStage, setCurrentStage] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -94,8 +99,49 @@ const Index = () => {
   const [isCorrect, setIsCorrect] = useState(false);
   const [completed, setCompleted] = useState(false);
 
-  const handleStart = () => {
-    setStarted(true);
+  useEffect(() => {
+    const testCompleted = localStorage.getItem('test_completed');
+    if (testCompleted === 'true') {
+      setHasCompleted(true);
+    }
+  }, []);
+
+  const playSound = (type: 'correct' | 'incorrect') => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    if (type === 'correct') {
+      oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+      oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.4);
+    } else {
+      oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(200, audioContext.currentTime + 0.15);
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+    }
+  };
+
+  const handleStartClick = () => {
+    setShowNameForm(true);
+  };
+
+  const handleSubmitName = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (firstName.trim() && lastName.trim()) {
+      setStarted(true);
+      setShowNameForm(false);
+    }
   };
 
   const handleOptionSelect = (index: number) => {
@@ -104,6 +150,7 @@ const Index = () => {
     const correct = stages[currentStage].options[index].correct;
     setIsCorrect(correct);
     setShowFeedback(true);
+    playSound(correct ? 'correct' : 'incorrect');
   };
 
   const handleNext = () => {
@@ -113,6 +160,8 @@ const Index = () => {
       setShowFeedback(false);
     } else {
       setCompleted(true);
+      localStorage.setItem('test_completed', 'true');
+      setHasCompleted(true);
     }
   };
 
@@ -126,6 +175,87 @@ const Index = () => {
   };
 
   const progress = ((currentStage + 1) / stages.length) * 100;
+
+  if (hasCompleted && !completed) {
+    return (
+      <div className="min-h-screen bg-[#fff0e3] text-gray-800 flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full text-center space-y-8 animate-fade-in">
+          <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl flex items-center justify-center border border-purple-200">
+            <Icon name="Lock" size={64} className="text-purple-600" />
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+            Тест уже пройден
+          </h1>
+          
+          <p className="text-lg md:text-xl text-gray-700 max-w-xl mx-auto">
+            Вы уже проходили этот тест на данном компьютере. Тест можно пройти только один раз.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (showNameForm) {
+    return (
+      <div className="min-h-screen bg-[#fff0e3] text-gray-800 flex items-center justify-center p-4">
+        <div className="max-w-md w-full animate-fade-in">
+          <div className="bg-white rounded-3xl shadow-2xl p-8">
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center border border-purple-200">
+                <Icon name="UserCheck" size={40} className="text-purple-600" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                Представьтесь, агент
+              </h2>
+              <p className="text-gray-600">
+                Введите ваши данные для начала миссии
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmitName} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Имя *
+                </label>
+                <Input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="Введите имя"
+                  required
+                  className="w-full"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Фамилия *
+                </label>
+                <Input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Введите фамилию"
+                  required
+                  className="w-full"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg py-6 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform"
+                disabled={!firstName.trim() || !lastName.trim()}
+              >
+                Начать миссию
+              </Button>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!started) {
     return (
@@ -150,7 +280,7 @@ const Index = () => {
               </div>
 
               <Button 
-                onClick={handleStart}
+                onClick={handleStartClick}
                 size="lg"
                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg px-12 py-7 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform"
               >
@@ -184,7 +314,7 @@ const Index = () => {
           </h1>
           
           <p className="text-lg md:text-xl text-gray-700 max-w-xl mx-auto">
-            Превосходно, агент 7-В! Ты измерил уровень сигнала, стабилизировал усилитель и очистил спектр от помех. Связь спасена, мир снова на частоте!
+            Превосходно, {firstName} {lastName}! Ты измерил уровень сигнала, стабилизировал усилитель и очистил спектр от помех. Связь спасена, мир снова на частоте!
           </p>
 
           <div className="bg-white border border-purple-200 p-6 rounded-2xl max-w-md mx-auto shadow-lg">
@@ -192,13 +322,16 @@ const Index = () => {
             <p className="text-2xl font-bold text-gray-900">Уровень агента повышен ✓</p>
           </div>
 
-          <Button 
-            onClick={handleRestart}
-            size="lg"
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg px-12 py-7 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform"
-          >
-            Пройти снова
-          </Button>
+          <div className="mt-8">
+            <img 
+              src="https://cdn.poehali.dev/files/ad806bf1-fb0e-428b-aa48-d88d35f2e40e.PNG" 
+              alt="Кот-детектив"
+              className="w-64 h-64 mx-auto rounded-3xl shadow-2xl object-cover"
+            />
+            <p className="mt-6 text-2xl font-semibold text-gray-800">
+              Вы молодцы! Хороших выходных❤️
+            </p>
+          </div>
         </div>
       </div>
     );
