@@ -99,7 +99,7 @@ const Index = () => {
   };
 
   const handleOptionSelect = (index: number) => {
-    if (showFeedback) return;
+    if (showFeedback && isCorrect) return;
     setSelectedOption(index);
     const correct = stages[currentStage].options[index].correct;
     setIsCorrect(correct);
@@ -219,12 +219,7 @@ const Index = () => {
               </p>
             </div>
 
-            {stage.audio && (
-              <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-xl border border-purple-100 mb-6">
-                <Icon name="Headphones" size={20} className="text-purple-600" />
-                <span className="text-sm text-purple-700">Аудио подсказка: {stage.audio}</span>
-              </div>
-            )}
+
 
             <div className="p-5 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100 mb-6">
               <p className="text-lg text-gray-800 leading-relaxed font-medium">
@@ -237,14 +232,14 @@ const Index = () => {
                 <button
                   key={index}
                   onClick={() => handleOptionSelect(index)}
-                  disabled={showFeedback}
+                  disabled={showFeedback && isCorrect}
                   className={`w-full p-5 text-left rounded-2xl border-2 transition-all font-medium text-lg ${
                     selectedOption === index
                       ? isCorrect
                         ? 'bg-green-50 border-green-400 text-green-800'
                         : 'bg-red-50 border-red-400 text-red-800'
                       : 'bg-white border-gray-200 hover:border-purple-300 hover:bg-purple-50 text-gray-800'
-                  } ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}`}
+                  } ${showFeedback && isCorrect ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}`}
                 >
                   {option.text}
                 </button>
