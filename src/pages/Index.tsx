@@ -95,6 +95,7 @@ const Index = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [started, setStarted] = useState(false);
+  const [startTime, setStartTime] = useState<number>(0);
   const [currentStage, setCurrentStage] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -143,6 +144,7 @@ const Index = () => {
     if (firstName.trim() && lastName.trim()) {
       setStarted(true);
       setShowNameForm(false);
+      setStartTime(Date.now());
     }
   };
 
@@ -165,6 +167,8 @@ const Index = () => {
       localStorage.setItem('test_completed', 'true');
       setHasCompleted(true);
       
+      const completionTime = Math.floor((Date.now() - startTime) / 1000);
+      
       try {
         await fetch('https://functions.poehali.dev/ca7d116e-bf46-44ca-8e35-a26b229ee287', {
           method: 'POST',
@@ -173,7 +177,8 @@ const Index = () => {
           },
           body: JSON.stringify({
             firstName: firstName,
-            lastName: lastName
+            lastName: lastName,
+            completionTime: completionTime
           })
         });
       } catch (error) {
