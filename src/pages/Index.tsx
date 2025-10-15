@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import Icon from '@/components/ui/icon';
 
 type Stage = {
@@ -131,39 +129,26 @@ const Index = () => {
 
   if (!started) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-        <div className="max-w-3xl w-full text-center space-y-8 animate-fade-in">
-          <div className="inline-block px-6 py-2 border-2 border-white/20 rotate-2 mb-4">
-            <p className="text-sm tracking-widest uppercase text-white/60">Совершенно секретно</p>
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase">
-            Сигнал под<br />прикрытием
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-white/70 max-w-2xl mx-auto">
-            Вы попали на шпионскую миссию. Измерьте уровень сигнала и спасите мир от радиошума!
-          </p>
-
-          <div className="flex flex-wrap gap-4 justify-center items-center text-sm text-white/50 py-8">
-            <div className="flex items-center gap-2">
-              <Icon name="Radio" size={20} />
-              <span>Уровни сигнала</span>
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-white flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full text-center space-y-8 animate-fade-in">
+          <div className="mb-8">
+            <div className="w-32 h-32 mx-auto mb-6 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center border border-white/20">
+              <Icon name="Radio" size={64} className="text-white" />
             </div>
-            <div className="flex items-center gap-2">
-              <Icon name="Antenna" size={20} />
-              <span>Децибелы</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Icon name="WavesLadder" size={20} />
-              <span>Фильтрация</span>
-            </div>
+            
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Сигнал под прикрытием
+            </h1>
+            
+            <p className="text-lg md:text-xl text-white/90 max-w-xl mx-auto">
+              Вы попали на шпионскую миссию. Измерьте уровень сигнала и спасите мир от радиошума!
+            </p>
           </div>
 
           <Button 
             onClick={handleStart}
             size="lg"
-            className="bg-white text-black hover:bg-white/90 text-lg px-12 py-6 uppercase tracking-wider font-bold"
+            className="bg-white text-purple-600 hover:bg-white/90 text-lg px-16 py-7 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform"
           >
             Начать миссию
           </Button>
@@ -174,31 +159,31 @@ const Index = () => {
 
   if (completed) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-white flex items-center justify-center p-4">
         <div className="max-w-2xl w-full text-center space-y-8 animate-scale-in">
-          <div className="inline-block p-4 border-2 border-white rounded-full mb-4">
+          <div className="w-32 h-32 mx-auto mb-6 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center border border-white/20">
             <Icon name="ShieldCheck" size={64} className="text-white" />
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase">
-            Миссия выполнена
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Миссия выполнена!
           </h1>
           
-          <p className="text-xl text-white/70 max-w-xl mx-auto">
+          <p className="text-lg md:text-xl text-white/90 max-w-xl mx-auto">
             Превосходно, агент 7-В! Ты измерил уровень сигнала, стабилизировал усилитель и очистил спектр от помех. Связь спасена, мир снова на частоте!
           </p>
 
-          <div className="bg-white/5 border border-white/10 p-6 rounded-lg">
-            <p className="text-sm text-white/50 uppercase tracking-wider mb-2">Статус</p>
-            <p className="text-2xl font-bold">Уровень агента повышен</p>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl max-w-md mx-auto">
+            <p className="text-sm text-white/70 mb-2">Статус миссии</p>
+            <p className="text-2xl font-bold">Уровень агента повышен ✓</p>
           </div>
 
           <Button 
             onClick={handleRestart}
             size="lg"
-            className="bg-white text-black hover:bg-white/90 text-lg px-8 py-6 uppercase tracking-wider font-bold"
+            className="bg-white text-purple-600 hover:bg-white/90 text-lg px-12 py-7 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform"
           >
-            Новая миссия
+            Пройти снова
           </Button>
         </div>
       </div>
@@ -208,81 +193,77 @@ const Index = () => {
   const stage = stages[currentStage];
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 md:p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <Icon name="ShieldAlert" size={24} />
-            <span className="text-sm uppercase tracking-widest text-white/60">Агент 7-В</span>
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 p-4 md:p-8">
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4 text-white/80 text-sm">
+            <span>Этап {currentStage + 1} из {stages.length}</span>
+            <span>{Math.round(progress)}% завершено</span>
           </div>
-          <div className="text-sm uppercase tracking-widest text-white/60">
-            Этап {currentStage + 1} / {stages.length}
+          <div className="w-full bg-white/20 rounded-full h-2">
+            <div 
+              className="bg-white h-2 rounded-full transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
 
-        <Progress value={progress} className="h-1" />
-
-        <Card className="bg-white/5 border-white/10 backdrop-blur animate-fade-in">
-          <CardHeader>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <CardTitle className="text-2xl md:text-3xl font-black uppercase tracking-tight mb-2">
-                  {stage.title}
-                </CardTitle>
-                <CardDescription className="text-white/60 whitespace-pre-line text-base">
-                  {stage.description}
-                </CardDescription>
-              </div>
-              <div className="flex-shrink-0 p-3 bg-white/5 rounded-lg border border-white/10">
-                <Icon name="Radio" size={32} />
-              </div>
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in">
+          <div className="p-6 md:p-8">
+            <div className="mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
+                {stage.title}
+              </h2>
+              <p className="text-gray-600 whitespace-pre-line text-base leading-relaxed">
+                {stage.description}
+              </p>
             </div>
-          </CardHeader>
-          
-          <CardContent className="space-y-6">
+
             {stage.audio && (
-              <div className="flex items-center gap-3 p-4 bg-black/30 rounded-lg border border-white/10">
-                <Icon name="Headphones" size={20} />
-                <span className="text-sm text-white/70">[Файл {stage.audio}]</span>
+              <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-xl border border-purple-100 mb-6">
+                <Icon name="Headphones" size={20} className="text-purple-600" />
+                <span className="text-sm text-purple-700">Аудио подсказка: {stage.audio}</span>
               </div>
             )}
 
-            <div className="p-4 bg-white/5 rounded-lg border-l-4 border-white">
-              <p className="text-lg leading-relaxed">{stage.question}</p>
+            <div className="p-5 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100 mb-6">
+              <p className="text-lg text-gray-800 leading-relaxed font-medium">
+                {stage.question}
+              </p>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 mb-6">
               {stage.options.map((option, index) => (
                 <button
                   key={index}
                   onClick={() => handleOptionSelect(index)}
                   disabled={showFeedback}
-                  className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
+                  className={`w-full p-5 text-left rounded-2xl border-2 transition-all font-medium text-lg ${
                     selectedOption === index
                       ? isCorrect
-                        ? 'bg-green-500/20 border-green-500'
-                        : 'bg-red-500/20 border-red-500'
-                      : 'bg-white/5 border-white/20 hover:border-white/40 hover:bg-white/10'
-                  } ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                        ? 'bg-green-50 border-green-400 text-green-800'
+                        : 'bg-red-50 border-red-400 text-red-800'
+                      : 'bg-white border-gray-200 hover:border-purple-300 hover:bg-purple-50 text-gray-800'
+                  } ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}`}
                 >
-                  <span className="text-lg font-medium">{option.text}</span>
+                  {option.text}
                 </button>
               ))}
             </div>
 
             {showFeedback && (
-              <div className={`p-4 rounded-lg border-l-4 animate-fade-in ${
+              <div className={`p-5 rounded-2xl mb-6 animate-fade-in ${
                 isCorrect 
-                  ? 'bg-green-500/10 border-green-500' 
-                  : 'bg-red-500/10 border-red-500'
+                  ? 'bg-green-50 border-2 border-green-300' 
+                  : 'bg-red-50 border-2 border-red-300'
               }`}>
                 <div className="flex items-start gap-3">
                   <Icon 
-                    name={isCorrect ? 'CheckCircle' : 'XCircle'} 
+                    name={isCorrect ? 'CheckCircle2' : 'XCircle'} 
                     size={24} 
-                    className={isCorrect ? 'text-green-500' : 'text-red-500'}
+                    className={isCorrect ? 'text-green-600 flex-shrink-0' : 'text-red-600 flex-shrink-0'}
                   />
-                  <p className="text-base leading-relaxed">
+                  <p className={`text-base leading-relaxed ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
                     {isCorrect ? stage.correctFeedback : stage.incorrectFeedback}
                   </p>
                 </div>
@@ -293,13 +274,13 @@ const Index = () => {
               <Button 
                 onClick={handleNext}
                 size="lg"
-                className="w-full bg-white text-black hover:bg-white/90 text-lg uppercase tracking-wider font-bold"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg py-7 rounded-full font-semibold shadow-lg hover:scale-[1.02] transition-transform"
               >
-                {currentStage < stages.length - 1 ? 'Следующий этап' : 'Завершить миссию'}
+                {currentStage < stages.length - 1 ? 'Следующий этап →' : 'Завершить миссию ✓'}
               </Button>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
