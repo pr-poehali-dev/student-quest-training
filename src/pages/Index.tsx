@@ -155,7 +155,7 @@ const Index = () => {
     playSound(correct ? 'correct' : 'incorrect');
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStage < stages.length - 1) {
       setCurrentStage(currentStage + 1);
       setSelectedOption(null);
@@ -164,6 +164,21 @@ const Index = () => {
       setCompleted(true);
       localStorage.setItem('test_completed', 'true');
       setHasCompleted(true);
+      
+      try {
+        await fetch('https://functions.poehali.dev/ca7d116e-bf46-44ca-8e35-a26b229ee287', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: firstName,
+            lastName: lastName
+          })
+        });
+      } catch (error) {
+        console.error('Failed to submit test results:', error);
+      }
     }
   };
 

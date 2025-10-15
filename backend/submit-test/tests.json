@@ -1,0 +1,18 @@
+{
+  "tests": [
+    {
+      "name": "Submit test results",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "firstName": "Иван",
+        "lastName": "Петров"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
