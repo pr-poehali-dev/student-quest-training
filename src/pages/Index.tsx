@@ -101,6 +101,8 @@ const Index = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [firstAttempts, setFirstAttempts] = useState<boolean[]>([]);
+  const [hasAnswered, setHasAnswered] = useState(false);
 
   useEffect(() => {
     const testCompleted = localStorage.getItem('test_completed');
@@ -155,6 +157,11 @@ const Index = () => {
     setIsCorrect(correct);
     setShowFeedback(true);
     playSound(correct ? 'correct' : 'incorrect');
+    
+    if (!hasAnswered) {
+      setFirstAttempts([...firstAttempts, correct]);
+      setHasAnswered(true);
+    }
   };
 
   const handleNext = async () => {
@@ -162,12 +169,15 @@ const Index = () => {
       setCurrentStage(currentStage + 1);
       setSelectedOption(null);
       setShowFeedback(false);
+      setHasAnswered(false);
     } else {
       setCompleted(true);
       localStorage.setItem('test_completed', 'true');
       setHasCompleted(true);
       
       const completionTime = Math.floor((Date.now() - startTime) / 1000);
+      const correctAnswers = firstAttempts.filter(Boolean).length;
+      const score = Math.round((correctAnswers / stages.length) * 100);
       
       try {
         await fetch('https://functions.poehali.dev/ca7d116e-bf46-44ca-8e35-a26b229ee287', {
@@ -178,7 +188,9 @@ const Index = () => {
           body: JSON.stringify({
             firstName: firstName,
             lastName: lastName,
-            completionTime: completionTime
+            completionTime: completionTime,
+            score: score,
+            totalQuestions: stages.length
           })
         });
       } catch (error) {
@@ -194,6 +206,8 @@ const Index = () => {
     setShowFeedback(false);
     setIsCorrect(false);
     setCompleted(false);
+    setFirstAttempts([]);
+    setHasAnswered(false);
   };
 
   const handleResetTest = () => {
@@ -208,6 +222,8 @@ const Index = () => {
     setShowNameForm(false);
     setFirstName('');
     setLastName('');
+    setFirstAttempts([]);
+    setHasAnswered(false);
   };
 
   const progress = ((currentStage + 1) / stages.length) * 100;
@@ -346,6 +362,9 @@ const Index = () => {
   }
 
   if (completed) {
+    const correctAnswers = firstAttempts.filter(Boolean).length;
+    const score = Math.round((correctAnswers / stages.length) * 100);
+    
     return (
       <div className="min-h-screen bg-[#fff0e3] text-gray-800 flex items-center justify-center p-4">
         <div className="max-w-2xl w-full text-center space-y-8 animate-scale-in">
@@ -361,9 +380,28 @@ const Index = () => {
             Превосходно, {firstName} {lastName}! Ты измерил уровень сигнала, стабилизировал усилитель и очистил спектр от помех. Связь спасена, мир снова на частоте!
           </p>
 
-          <div className="bg-white border border-purple-200 p-6 rounded-2xl max-w-md mx-auto shadow-lg">
-            <p className="text-sm text-gray-600 mb-2">Статус миссии</p>
-            <p className="text-2xl font-bold text-gray-900">Уровень агента повышен ✓</p>
+          <div className="bg-white border border-purple-200 p-6 rounded-2xl max-w-md mx-auto shadow-lg space-y-4">
+            <div>
+              <p className="text-sm text-gray-600 mb-2">Твой результат</p>
+              <p className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                {score}%
+              </p>
+            </div>
+            
+            <div className="pt-4 border-t border-gray-200">
+              <p className="text-sm text-gray-600">
+                Правильных ответов с первой попытки: <span className="font-bold text-gray-900">{correctAnswers} из {stages.length}</span>
+              </p>
+            </div>
+
+            <div className="pt-2">
+              <p className="text-lg font-semibold text-gray-900">
+                {score === 100 ? '🏆 Идеальный результат!' : 
+                 score >= 80 ? '⭐ Отличная работа!' : 
+                 score >= 60 ? '✓ Хорошо!' : 
+                 '💪 Продолжай учиться!'}
+              </p>
+            </div>
           </div>
 
           <div className="mt-8">

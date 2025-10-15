@@ -45,6 +45,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     first_name = body_data.get('firstName', '')
     last_name = body_data.get('lastName', '')
     completion_time = body_data.get('completionTime', 0)
+    score = body_data.get('score', 0)
+    total_questions = body_data.get('totalQuestions', 5)
     
     if not first_name or not last_name:
         return {
@@ -65,7 +67,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     cursor.execute(
         "INSERT INTO test_results (first_name, last_name, score, total_questions, completion_time_seconds) VALUES (%s, %s, %s, %s, %s) RETURNING id, completed_at",
-        (first_name, last_name, 5, 5, completion_time)
+        (first_name, last_name, score, total_questions, completion_time)
     )
     result = cursor.fetchone()
     test_id = result['id']
@@ -147,7 +149,7 @@ def send_email_notification(first_name: str, last_name: str, completed_at, compl
             <p style="margin: 10px 0;"><strong>Студент:</strong> {first_name} {last_name}</p>
             <p style="margin: 10px 0;"><strong>Дата и время:</strong> {completed_at.strftime('%d.%m.%Y в %H:%M') if hasattr(completed_at, 'strftime') else str(completed_at)}</p>
             <p style="margin: 10px 0;"><strong>Время прохождения:</strong> {format_time(completion_time)}</p>
-            <p style="margin: 10px 0;"><strong>Результат:</strong> 5/5 ✓</p>
+            <p style="margin: 10px 0;"><strong>Результат:</strong> {all_results[0]['score']}% ({all_results[0]['score']*all_results[0]['total_questions']//100}/{all_results[0]['total_questions']} с первой попытки)</p>
           </div>
 
     def format_time(seconds: int) -> str:
