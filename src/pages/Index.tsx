@@ -176,6 +176,20 @@ const Index = () => {
     setCompleted(false);
   };
 
+  const handleResetTest = () => {
+    localStorage.removeItem('test_completed');
+    setHasCompleted(false);
+    setStarted(false);
+    setCurrentStage(0);
+    setSelectedOption(null);
+    setShowFeedback(false);
+    setIsCorrect(false);
+    setCompleted(false);
+    setShowNameForm(false);
+    setFirstName('');
+    setLastName('');
+  };
+
   const progress = ((currentStage + 1) / stages.length) * 100;
 
   if (hasCompleted && !completed) {
@@ -193,6 +207,14 @@ const Index = () => {
           <p className="text-lg md:text-xl text-gray-700 max-w-xl mx-auto">
             Вы уже проходили этот тест на данном компьютере. Тест можно пройти только один раз.
           </p>
+
+          <button
+            onClick={handleResetTest}
+            className="text-sm text-gray-400 hover:text-purple-600 transition-colors"
+            title="Только для создателя"
+          >
+            Сбросить ограничение
+          </button>
         </div>
       </div>
     );
