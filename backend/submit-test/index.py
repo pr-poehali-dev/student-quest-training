@@ -82,12 +82,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     cursor.close()
     conn.close()
     
-    try:
-        send_email_notification(first_name, last_name, completed_at, completion_time, all_results, admin_email)
-    except Exception as e:
-        print(f"Email sending failed: {e}")
-    
-    return {
+    response = {
         'statusCode': 200,
         'headers': {
             'Content-Type': 'application/json',
@@ -100,40 +95,54 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }),
         'isBase64Encoded': False
     }
+    
+    try:
+        send_email_notification(first_name, last_name, completed_at, completion_time, all_results, admin_email)
+    except BaseException as e:
+        print(f"Email sending failed: {e}")
+    
+    return response
 
+
+def format_time(seconds: int) -> str:
+    mins = seconds // 60
+    secs = seconds % 60
+    return f"{mins} мин {secs} сек"
 
 def send_email_notification(first_name: str, last_name: str, completed_at, completion_time: int, all_results, admin_email: str):
-    smtp_host = os.environ.get('SMTP_HOST')
-    smtp_port = int(os.environ.get('SMTP_PORT', '587'))
-    smtp_user = os.environ.get('SMTP_USER')
-    smtp_password = os.environ.get('SMTP_PASSWORD')
+    smtp_host = os.environ.get('SMTP_HOST', '')
+    smtp_port_str = os.environ.get('SMTP_PORT', '587')
+    smtp_user = os.environ.get('SMTP_USER', '')
+    smtp_password = os.environ.get('SMTP_PASSWORD', '')
     
-    if not all([smtp_host, smtp_user, smtp_password, admin_email]):
-        print("SMTP configuration incomplete, skipping email")
+    if not smtp_host or not smtp_user or not smtp_password or not admin_email:
+        print(f"SMTP configuration incomplete (host={bool(smtp_host)}, user={bool(smtp_user)}, pass={bool(smtp_password)}, email={bool(admin_email)}), skipping email")
         return
+    
+    try:
+        smtp_port = int(smtp_port_str)
+    except ValueError:
+        print(f"Invalid SMTP_PORT: {smtp_port_str}, using default 587")
+        smtp_port = 587
     
     msg = MIMEMultipart('alternative')
     msg['Subject'] = f'Новый результат теста: {first_name} {last_name}'
     msg['From'] = smtp_user
     msg['To'] = admin_email
     
-    def format_time(seconds: int) -> str:
-        mins = seconds // 60
-        secs = seconds % 60
-        return f"{mins} мин {secs} сек"
-    
     table_rows = ""
     for idx, row in enumerate(all_results, 1):
         completed_date = row['completed_at'].strftime('%d.%m.%Y') if hasattr(row['completed_at'], 'strftime') else str(row['completed_at'])
         completed_time_str = row['completed_at'].strftime('%H:%M') if hasattr(row['completed_at'], 'strftime') else ''
         time_taken = format_time(row.get('completion_time_seconds', 0))
+        correct_answers = row['score'] * row['total_questions'] // 100
         table_rows += f"""
         <tr style="{'background-color: #e0f7fa;' if idx == 1 else 'background-color: #ffffff;'}">
             <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">{idx}</td>
             <td style="padding: 12px; border: 1px solid #ddd;">{row['first_name']} {row['last_name']}</td>
             <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">{completed_date}<br/><span style="font-size: 12px; color: #666;">{completed_time_str}</span></td>
             <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">{time_taken}</td>
-            <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">{row['score']}/{row['total_questions']}</td>
+            <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">{row['score']}% ({correct_answers}/{row['total_questions']})</td>
         </tr>
         """
     
@@ -151,11 +160,6 @@ def send_email_notification(first_name: str, last_name: str, completed_at, compl
             <p style="margin: 10px 0;"><strong>Время прохождения:</strong> {format_time(completion_time)}</p>
             <p style="margin: 10px 0;"><strong>Результат:</strong> {all_results[0]['score']}% ({all_results[0]['score']*all_results[0]['total_questions']//100}/{all_results[0]['total_questions']} с первой попытки)</p>
           </div>
-
-    def format_time(seconds: int) -> str:
-        mins = seconds // 60
-        secs = seconds % 60
-        return f"{mins} мин {secs} сек"
           
           <h3 style="color: #4b5563; margin-top: 30px;">Последние 20 результатов:</h3>
           
@@ -185,8 +189,21 @@ def send_email_notification(first_name: str, last_name: str, completed_at, compl
     html_part = MIMEText(html_content, 'html', 'utf-8')
     msg.attach(html_part)
     
-    server = smtplib.SMTP(smtp_host, smtp_port)
-    server.starttls()
+    print(f"Connecting to SMTP server {smtp_host}:{smtp_port}...")
+    
+    if smtp_port == 465:
+        import smtplib
+        server = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=10)
+        print("Connected via SSL, logging in...")
+    else:
+        server = smtplib.SMTP(smtp_host, smtp_port, timeout=10)
+        print("Connected, starting TLS...")
+        server.starttls()
+        print("TLS started, logging in...")
+    
     server.login(smtp_user, smtp_password)
+    print("Logged in, sending message...")
     server.send_message(msg)
+    print("Message sent, closing connection...")
     server.quit()
+    print("Email sent successfully!")

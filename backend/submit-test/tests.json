@@ -6,7 +6,10 @@
       "path": "/",
       "body": {
         "firstName": "Иван",
-        "lastName": "Петров"
+        "lastName": "Петров",
+        "completionTime": 120,
+        "score": 80,
+        "totalQuestions": 5
       },
       "expectedStatus": 200,
       "expectedBody": {
