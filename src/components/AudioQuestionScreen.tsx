@@ -40,21 +40,21 @@ const AudioQuestionScreen = ({
 
   const audioSamples = [
     { 
-      url: 'https://cdn.poehali.dev/files/a2e9fb0c-bd23-44ad-a51e-e99dd5c86c7e.mp3', 
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', 
       label: 'A', 
       volume: 0.3,
       voltage: '2 В',
       image: 'https://cdn.poehali.dev/projects/c09e2a63-dbea-4624-98e2-78eeaf56d80c/files/842467f5-75e8-4930-8ea5-4c03b491af90.jpg'
     },
     { 
-      url: 'https://cdn.poehali.dev/files/d25cb96d-5f02-4c13-8d74-8f49af9cf63f.mp3', 
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', 
       label: 'B', 
       volume: 0.7,
       voltage: '4 В',
       image: 'https://cdn.poehali.dev/projects/c09e2a63-dbea-4624-98e2-78eeaf56d80c/files/f46d3030-26ef-4a42-956b-6f9909b420c7.jpg'
     },
     { 
-      url: 'https://cdn.poehali.dev/files/47f9aa82-7bb7-4e40-918c-5b7d4e1e086a.mp3', 
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', 
       label: 'C', 
       volume: 0.5,
       voltage: '3 В',
