@@ -62,8 +62,8 @@ const AudioQuestionScreen = ({
     },
   ];
 
-  const handlePlayAudio = (index: number) => {
-    audioRefs.current.forEach((audio, i) => {
+  const handlePlayAudio = async (index: number) => {
+    audioRefs.current.forEach((audio) => {
       if (audio) {
         audio.pause();
         audio.currentTime = 0;
@@ -72,10 +72,15 @@ const AudioQuestionScreen = ({
 
     const audio = audioRefs.current[index];
     if (audio) {
-      audio.volume = audioSamples[index].volume;
-      audio.play();
-      setPlayingIndex(index);
-      audio.onended = () => setPlayingIndex(null);
+      try {
+        audio.volume = audioSamples[index].volume;
+        await audio.play();
+        setPlayingIndex(index);
+        audio.onended = () => setPlayingIndex(null);
+      } catch (error) {
+        console.error('Failed to play audio:', error);
+        setPlayingIndex(null);
+      }
     }
   };
 
