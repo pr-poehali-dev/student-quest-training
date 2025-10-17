@@ -3,6 +3,7 @@ import WelcomeScreen from '@/components/WelcomeScreen';
 import NameFormScreen from '@/components/NameFormScreen';
 import QuestionScreen from '@/components/QuestionScreen';
 import MatchingQuestionScreen from '@/components/MatchingQuestionScreen';
+import AudioQuestionScreen from '@/components/AudioQuestionScreen';
 import CompletionScreen from '@/components/CompletionScreen';
 import { stages } from '@/data/stages';
 import { playSound } from '@/utils/audio';
@@ -146,6 +147,22 @@ const Index = () => {
         totalStages={stages.length}
         firstName={firstName}
         onNext={handleMatchingNext}
+      />
+    );
+  }
+
+  if (currentStageData.type === 'audio') {
+    return (
+      <AudioQuestionScreen
+        stage={currentStageData}
+        currentStage={currentStage}
+        totalStages={stages.length}
+        firstName={firstName}
+        selectedOption={selectedOption}
+        showFeedback={showFeedback}
+        isCorrect={isCorrect}
+        onOptionSelect={handleOptionSelect}
+        onNext={handleNext}
       />
     );
   }
