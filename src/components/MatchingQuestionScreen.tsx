@@ -40,22 +40,27 @@ const MatchingQuestionScreen = ({
   const rightItems = [...pairs.map((p) => p.right)].sort(() => Math.random() - 0.5);
 
   const handleLeftClick = (item: string) => {
-    if (showFeedback) return;
+    if (showFeedback && isCorrect) return;
     setSelectedLeft(item);
   };
 
   const handleRightClick = (item: string) => {
-    if (showFeedback || !selectedLeft) return;
+    if ((showFeedback && isCorrect) || !selectedLeft) return;
     const newMatches = { ...matches, [selectedLeft]: item };
     setMatches(newMatches);
     setSelectedLeft(null);
+    if (showFeedback && !isCorrect) {
+      setShowFeedback(false);
+    }
   };
 
   const handleRemoveMatch = (leftItem: string) => {
-    if (showFeedback) return;
     const newMatches = { ...matches };
     delete newMatches[leftItem];
     setMatches(newMatches);
+    if (showFeedback && !isCorrect) {
+      setShowFeedback(false);
+    }
   };
 
   const handleSubmit = () => {
@@ -120,7 +125,7 @@ const MatchingQuestionScreen = ({
                     <div key={item} className="relative">
                       <button
                         onClick={() => handleLeftClick(item)}
-                        disabled={showFeedback}
+                        disabled={showFeedback && isCorrect}
                         className={`w-full p-4 rounded-xl border-2 transition-all text-left font-medium ${
                           isSelected
                             ? 'bg-purple-100 border-purple-600 text-purple-900'
@@ -128,7 +133,7 @@ const MatchingQuestionScreen = ({
                             ? 'bg-green-50 border-green-500 text-green-800'
                             : 'bg-white border-gray-200 hover:border-purple-400 hover:bg-purple-50 text-gray-800'
                         } ${
-                          showFeedback ? 'cursor-not-allowed' : 'cursor-pointer'
+                          showFeedback && isCorrect ? 'cursor-not-allowed' : 'cursor-pointer'
                         }`}
                       >
                         {item}
@@ -136,8 +141,10 @@ const MatchingQuestionScreen = ({
                       {isMatched && (
                         <button
                           onClick={() => handleRemoveMatch(item)}
-                          disabled={showFeedback}
-                          className="absolute -right-3 -top-3 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors"
+                          disabled={showFeedback && isCorrect}
+                          className={`absolute -right-3 -top-3 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors ${
+                            showFeedback && isCorrect ? 'cursor-not-allowed opacity-50' : ''
+                          }`}
                         >
                           <Icon name="X" size={16} />
                         </button>
@@ -158,7 +165,7 @@ const MatchingQuestionScreen = ({
                     <button
                       key={item}
                       onClick={() => handleRightClick(item)}
-                      disabled={showFeedback || !selectedLeft || isUsed}
+                      disabled={(showFeedback && isCorrect) || !selectedLeft || isUsed}
                       className={`w-full p-4 rounded-xl border-2 transition-all text-left font-medium ${
                         isUsed
                           ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed'
