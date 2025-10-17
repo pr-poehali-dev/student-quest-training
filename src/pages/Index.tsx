@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import NameFormScreen from '@/components/NameFormScreen';
 import QuestionScreen from '@/components/QuestionScreen';
+import MatchingQuestionScreen from '@/components/MatchingQuestionScreen';
 import CompletionScreen from '@/components/CompletionScreen';
 import { stages } from '@/data/stages';
 import { playSound } from '@/utils/audio';
@@ -90,6 +91,15 @@ const Index = () => {
     }
   };
 
+  const handleMatchingNext = (isCorrect: boolean) => {
+    if (!hasAnswered) {
+      setFirstAttempts([...firstAttempts, isCorrect]);
+      setHasAnswered(true);
+    }
+    playSound(isCorrect ? 'correct' : 'incorrect');
+    handleNext();
+  };
+
   if (showNameForm) {
     return (
       <NameFormScreen
@@ -126,9 +136,23 @@ const Index = () => {
     );
   }
 
+  const currentStageData = stages[currentStage];
+
+  if (currentStageData.type === 'matching') {
+    return (
+      <MatchingQuestionScreen
+        stage={currentStageData}
+        currentStage={currentStage}
+        totalStages={stages.length}
+        firstName={firstName}
+        onNext={handleMatchingNext}
+      />
+    );
+  }
+
   return (
     <QuestionScreen
-      stage={stages[currentStage]}
+      stage={currentStageData}
       currentStage={currentStage}
       totalStages={stages.length}
       firstName={firstName}
