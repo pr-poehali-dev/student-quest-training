@@ -62,36 +62,29 @@ const AudioQuestionScreen = ({
     },
   ];
 
-  const handlePlayAudio = async (index: number) => {
-    audioRefs.current.forEach((audio) => {
-      if (audio) {
-        audio.pause();
-        audio.currentTime = 0;
-      }
-    });
-
+  const handleToggleAudio = (index: number) => {
     const audio = audioRefs.current[index];
-    if (audio) {
-      try {
-        audio.volume = audioSamples[index].volume;
-        await audio.play();
-        setPlayingIndex(index);
-        audio.onended = () => setPlayingIndex(null);
-      } catch (error) {
-        console.error('Failed to play audio:', error);
-        setPlayingIndex(null);
-      }
-    }
-  };
+    if (!audio) return;
 
-  const handleStopAudio = () => {
-    audioRefs.current.forEach((audio) => {
-      if (audio) {
-        audio.pause();
-        audio.currentTime = 0;
-      }
-    });
-    setPlayingIndex(null);
+    if (playingIndex === index) {
+      audio.pause();
+      audio.currentTime = 0;
+      setPlayingIndex(null);
+    } else {
+      audioRefs.current.forEach((a, i) => {
+        if (a && i !== index) {
+          a.pause();
+          a.currentTime = 0;
+        }
+      });
+
+      audio.volume = audioSamples[index].volume;
+      audio.play().catch((error) => {
+        console.error('Failed to play audio:', error);
+      });
+      setPlayingIndex(index);
+      audio.onended = () => setPlayingIndex(null);
+    }
   };
 
   return (
@@ -143,9 +136,8 @@ const AudioQuestionScreen = ({
                   <div className="flex flex-col md:flex-row gap-4 items-center">
                     <div className="flex-1 w-full">
                       <button
-                        onClick={() =>
-                          playingIndex === index ? handleStopAudio() : handlePlayAudio(index)
-                        }
+                        onClick={() => handleToggleAudio(index)}
+                        type="button"
                         className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
                           playingIndex === index
                             ? 'bg-purple-100 border-purple-600 text-purple-900'
