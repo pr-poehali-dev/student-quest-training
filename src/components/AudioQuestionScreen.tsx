@@ -39,9 +39,27 @@ const AudioQuestionScreen = ({
   const audioRefs = useRef<(HTMLAudioElement | null)[]>([null, null, null]);
 
   const audioSamples = [
-    { url: 'https://cdn.poehali.dev/files/a2e9fb0c-bd23-44ad-a51e-e99dd5c86c7e.mp3', label: 'A', volume: 0.3 },
-    { url: 'https://cdn.poehali.dev/files/d25cb96d-5f02-4c13-8d74-8f49af9cf63f.mp3', label: 'B', volume: 0.7 },
-    { url: 'https://cdn.poehali.dev/files/47f9aa82-7bb7-4e40-918c-5b7d4e1e086a.mp3', label: 'C', volume: 0.5 },
+    { 
+      url: 'https://cdn.poehali.dev/files/a2e9fb0c-bd23-44ad-a51e-e99dd5c86c7e.mp3', 
+      label: 'A', 
+      volume: 0.3,
+      voltage: '2 В',
+      image: 'https://cdn.poehali.dev/projects/c09e2a63-dbea-4624-98e2-78eeaf56d80c/files/842467f5-75e8-4930-8ea5-4c03b491af90.jpg'
+    },
+    { 
+      url: 'https://cdn.poehali.dev/files/d25cb96d-5f02-4c13-8d74-8f49af9cf63f.mp3', 
+      label: 'B', 
+      volume: 0.7,
+      voltage: '4 В',
+      image: 'https://cdn.poehali.dev/projects/c09e2a63-dbea-4624-98e2-78eeaf56d80c/files/f46d3030-26ef-4a42-956b-6f9909b420c7.jpg'
+    },
+    { 
+      url: 'https://cdn.poehali.dev/files/47f9aa82-7bb7-4e40-918c-5b7d4e1e086a.mp3', 
+      label: 'C', 
+      volume: 0.5,
+      voltage: '3 В',
+      image: 'https://cdn.poehali.dev/projects/c09e2a63-dbea-4624-98e2-78eeaf56d80c/files/e5b0eba1-f77a-4933-9be1-aea17635418b.jpg'
+    },
   ];
 
   const handlePlayAudio = (index: number) => {
@@ -108,32 +126,47 @@ const AudioQuestionScreen = ({
               </p>
             </div>
 
-            <div className="mb-6 space-y-4">
-              <h3 className="font-semibold text-lg text-gray-900">🎧 Прослушай записи:</h3>
+            <div className="mb-6 space-y-6">
+              <h3 className="font-semibold text-lg text-gray-900">🎧 Прослушай записи и изучи осциллограммы:</h3>
               {audioSamples.map((sample, index) => (
-                <div key={index}>
+                <div key={index} className="bg-gray-50 p-4 rounded-2xl border border-gray-200">
                   <audio
                     ref={(el) => (audioRefs.current[index] = el)}
                     src={sample.url}
                     preload="auto"
                   />
-                  <button
-                    onClick={() =>
-                      playingIndex === index ? handleStopAudio() : handlePlayAudio(index)
-                    }
-                    className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
-                      playingIndex === index
-                        ? 'bg-purple-100 border-purple-600 text-purple-900'
-                        : 'bg-white border-gray-200 hover:border-purple-400 hover:bg-purple-50 text-gray-800'
-                    }`}
-                  >
-                    <span className="font-medium">Запись {sample.label}</span>
-                    <Icon
-                      name={playingIndex === index ? 'Pause' : 'Play'}
-                      size={24}
-                      className={playingIndex === index ? 'text-purple-600' : 'text-gray-600'}
-                    />
-                  </button>
+                  <div className="flex flex-col md:flex-row gap-4 items-center">
+                    <div className="flex-1 w-full">
+                      <button
+                        onClick={() =>
+                          playingIndex === index ? handleStopAudio() : handlePlayAudio(index)
+                        }
+                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
+                          playingIndex === index
+                            ? 'bg-purple-100 border-purple-600 text-purple-900'
+                            : 'bg-white border-gray-200 hover:border-purple-400 hover:bg-purple-50 text-gray-800'
+                        }`}
+                      >
+                        <span className="font-medium">Запись {sample.label}</span>
+                        <Icon
+                          name={playingIndex === index ? 'Pause' : 'Play'}
+                          size={24}
+                          className={playingIndex === index ? 'text-purple-600' : 'text-gray-600'}
+                        />
+                      </button>
+                      <div className="mt-3 text-center">
+                        <p className="text-sm text-gray-600">Напряжение на осциллографе:</p>
+                        <p className="text-xl font-bold text-purple-600">{sample.voltage}</p>
+                      </div>
+                    </div>
+                    <div className="flex-1 w-full">
+                      <img 
+                        src={sample.image} 
+                        alt={`Осциллограмма записи ${sample.label}`}
+                        className="w-full h-auto rounded-xl border-2 border-gray-300 shadow-md"
+                      />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
